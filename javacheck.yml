@@ -1,0 +1,27 @@
+---
+- hosts: server
+  vars_prompt:
+    - name: java_version
+      prompt: "Enter java version: "
+      private: no
+
+   
+  tasks:
+  - name: Fetch Java version
+    command: java -version
+    register: java_result
+    ignore_errors: True
+  - debug:
+     msg: "Failed - Java is not installed"
+    when: java_result is failed
+  - debug:
+     msg: " {{java_result.stdout}} Success - Java is installed"
+    when: java_result is success
+  - debug: 
+     var: java_result.stderr_lines[0]
+  - debug:
+     msg: "{{java_result.stderr_lines[0].split('\"')[1]}}"
+
+  - debug:
+      msg: "same version"
+    when: java_version == java_result.stderr_lines[0].split('\"')[1]
