@@ -1,16 +1,24 @@
 @Library('CI_CD_PIPELINE@master') _
 pipeline { agent { node { label 'linux1' } }
     stages {
-  
-    stage("upload")
-     { 
-     steps{
-      script{
-         def inputFile = input message: 'Upload file', parameters: [file(name: 'ssh.pem')]
-         new hudson.FilePath(new File("$workspace/ssh.pem")).copyFrom(inputFile)
-    
-      }}
-   } 
+    stage("Interactive_Input") {
+            steps {
+                script {
+
+                    // Variables for input
+                    def inputConfig
+                    def userInput = input(
+                          id: 'userInput', message: 'enter the java version :?',
+                            parameters: [
+
+                                    string(defaultValue: 'None',
+                                            description: 'java version',
+                                            name: 'jversion')
+                             ])
+                    java_version=userInput.jversion:
+          }
+       }
+    }
 
     stage('prepare ansible inventory'){
         steps {
@@ -22,7 +30,7 @@ pipeline { agent { node { label 'linux1' } }
        stage('Install java') {
             steps{
                 sh """
-                  ansible-playbook --private-key=./ssh.pem -i inventory javacheck.yml  --extra-vars "version=1.8.0_232" -vv
+                  ansible-playbook  -i inventory javacheck.yml  --extra-vars "version=$java_version" -vv
          """ 
             }}
     }
