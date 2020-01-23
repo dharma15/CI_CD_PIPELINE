@@ -13,7 +13,7 @@
     register: java_result
     ignore_errors: True
   - debug:
-     msg: "Failed - Java is not installed"
+     msg: "Failed - Java is not installed please install the java"
     when: java_result is failed
   - debug:
      msg: " {{java_result.stdout}} Success - Java is installed"
@@ -28,3 +28,9 @@
   - debug:
       msg: "same version"
     when: java_version == java_result.stderr_lines[0].split('\"')[1]
+  - tasks:
+     - include java_install.yml
+       when: java_result is failed
+   - tasks: 
+      - include java_upgrade.yml
+        when: java_version > java_result.stderr_lines[0].split('\"')[1]
