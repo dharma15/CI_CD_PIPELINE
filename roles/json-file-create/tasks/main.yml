@@ -1,0 +1,38 @@
+    #shell: sudo su  - svc_temp -c 'echo -e "{{ inventory_hostname }}:\n\nAudit User:`whoami`\nHOSTNAME:`hostname`\nssh private Key:\n`cat .ssh/id_rsa`\nDomain:`domainname`\nSystem TYPE:`uname`\nIP=`hostname -i`\nTIMEOUT:90" > api.json'
+  - shell: su - svc_temp -c ' echo `hostname -i`'
+    register: result
+  - shell: su  - svc_temp -c 'echo `whoami` '
+    register: result1
+  - shell: su  - svc_temp -c 'domainname'
+    register: result2
+  - shell: su  - svc_temp -c ' cat .ssh/id_rsa '  
+    register: result3
+
+  - debug:
+      "msg={{result3}}"
+
+  - set_fact:
+      #test: "{{result3.stdout_lines}"
+      test: []
+
+  - set_fact:
+      test: "{{ test + \n [item]  }}"
+    with_items: "{{ result3.stdout_lines }}"
+
+
+#  - debug:
+#      "msg={{test}}"
+
+  - set_fact:
+      shelloutput: '{ "{{ inventory_hostname }}": {"IP": "{{result.stdout_lines[0]}}" , "Audit USer": "{{ result1.stdout_lines[0] }}" , "DomainName": "{{ result2.stdout_lines[0]}}" , "ssh-key": "{{ result3.stdout_lines[0] }}" } }'
+ #     shelloutput: '{ "{{ inventory_hostname }}": {"IP": "{{result.stdout_lines[0]}}" , "Audit USer": "{{ result1.stdout_lines[0] }}" , "DomainName": "{{ result2.stdout_lines[0]}}" , "ssh-key": "{{ test }}" } }'
+  
+  - set_fact:
+      output: "{{ output +[ shelloutput ] }}"
+
+
+#  - name: Storing api.json file to the Artifact
+#    fetch:
+#      src: /home/svc_temp/api.json
+#      dest: api.json
+#      flat: yes

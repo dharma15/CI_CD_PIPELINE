@@ -1,0 +1,19 @@
+#create user amd ssh key
+  - name: Ensure group "svc_temp" exists
+    group:
+      name: svc_temp
+      state: present
+  - user: name=svc_temp comment="svc_temp" group=svc_temp generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+
+  - name: Storing in a path relative to the playbook
+    fetch:
+      src: /home/svc_temp/.ssh/id_rsa
+      dest: ssh/ssh-{{ inventory_hostname }}
+      flat: yes
+  - name: Storing in a path relative to the playbook
+    fetch:
+      src: /home/svc_temp/.ssh/id_rsa.pub
+      dest: ssh/ssh-{{ inventory_hostname }}.pub
+      flat: yes
+  - name: Placing key
+    authorized_key: user=svc_temp key="{{ lookup('file', 'ssh/ssh-{{ inventory_hostname }}.pub') }}"

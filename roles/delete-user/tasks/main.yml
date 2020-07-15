@@ -1,0 +1,2 @@
+  - name: Delete user 
+    shell: sudo userdel -r svc_temp

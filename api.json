@@ -1,0 +1,10 @@
+[
+    {
+        "centos7-build": {
+            "Audit USer": "svc_temp",
+            "DomainName": "(none)",
+            "IP": "10.126.135.159",
+            "ssh-key": "-----BEGIN RSA PRIVATE KEY-----"
+        }
+    }
+]

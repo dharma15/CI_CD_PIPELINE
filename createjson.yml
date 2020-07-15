@@ -1,0 +1,18 @@
+---
+- hosts: ssh
+  become: yes
+  become_user: root
+  become_method: sudo
+  #roles:
+  #    - json-file-create 
+  tasks:
+  - set_fact:
+      output: []
+  - include_role:
+      name: json-file-create
+  - debug:
+      "msg={{output | to_nice_json}}"
+  - copy:
+      content="{{ output | to_nice_json }}"
+      dest="/home/play_book/final_script/api.json"
+    delegate_to: localhost

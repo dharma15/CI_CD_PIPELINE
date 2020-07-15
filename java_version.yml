@@ -1,0 +1,15 @@
+---
+- hosts: server
+  tasks:
+  - name: register if java is installed 
+    command: rpm -qa | grep jdk
+    register: java_version
+    ignore_errors: True
+  - debug:
+     msg: "Failed - Java is not installed"
+    when: java_version is failed
+  - debug:
+     msg: " Success - Java is installed"
+    when: java_version is success
+  - debug: 
+     msg: "{{java_version}}"

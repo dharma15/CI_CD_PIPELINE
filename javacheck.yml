@@ -1,11 +1,10 @@
 ---
 - hosts: server
-  #vars_prompt:
-   # - name: java_version
-    #  prompt: "Enter java version: "
-     # private: no
-  vars:
-    java_version: "{{ version }}"
+  vars_prompt:
+    - name: java_version
+      prompt: "Enter java version: "
+      private: no
+
    
   tasks:
   - name: Fetch Java version
@@ -23,8 +22,6 @@
   - debug:
      msg: "{{java_result.stderr_lines[0].split('\"')[1]}}"
 
-  - debug:
-      msg: "{{java_version}}"
   - debug:
       msg: "same version"
     when: java_version == java_result.stderr_lines[0].split('\"')[1]

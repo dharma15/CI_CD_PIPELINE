@@ -1,0 +1,10 @@
+---
+
+##########################################################################
+
+####### Please make changes if need be
+
+##########################################################################
+ansible_port: 22
+ansible_user: dharmeku
+ansible_user_key_path: /home/dharmeku/.ssh/id_rsa
