@@ -12,7 +12,7 @@
     register: java_result
     ignore_errors: True
   - debug:
-     msg: "Failed - Java is not installed"
+     msg: "Failed - Java is not installed please install the java"
     when: java_result is failed
   - debug:
      msg: " {{java_result.stdout}} Success - Java is installed"
@@ -25,3 +25,14 @@
   - debug:
       msg: "same version"
     when: java_version == java_result.stderr_lines[0].split('\"')[1]
+  - name: downloading java binary from s3
+    shell: /usr/bin/s3cmd get s3://my-bucket/packages/jdk-$JDK_VERSION-linux-x64-rpm.bin --force
+    when_string: java_result.stderr_lines[0].split('\"')[1] != $java_version
+    tags:
+    - java
+  - name: Installing Java
+    shell: yes | ./jdk-*-linux-x64-rpm.bin
+    when_string: java_result.stderr_lines[0].split('\"')[1] != $java_version
+    tags:
+    - java
+  
